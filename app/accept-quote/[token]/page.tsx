@@ -15,21 +15,17 @@ async function acceptQuote(token: string) {
     .single()
 
   if (!quote) {
-    return { error: 'Quote not found' }
+    return
   }
 
   // Update quote status to accepted
-  const { error } = await supabase
+  await supabase
     .from('quotes')
     .update({ status: 'accepted' })
     .eq('id', quote.id)
 
-  if (error) {
-    return { error: 'Failed to accept quote' }
-  }
-
+  revalidatePath(`/accept-quote/${token}`)
   revalidatePath(`/dashboard/quotes/${quote.id}`)
-  return { success: true }
 }
 
 async function rejectQuote(token: string) {
@@ -45,21 +41,17 @@ async function rejectQuote(token: string) {
     .single()
 
   if (!quote) {
-    return { error: 'Quote not found' }
+    return
   }
 
   // Update quote status to rejected
-  const { error } = await supabase
+  await supabase
     .from('quotes')
     .update({ status: 'rejected' })
     .eq('id', quote.id)
 
-  if (error) {
-    return { error: 'Failed to decline quote' }
-  }
-
+  revalidatePath(`/accept-quote/${token}`)
   revalidatePath(`/dashboard/quotes/${quote.id}`)
-  return { success: true }
 }
 
 export default async function AcceptQuotePage({
