@@ -13,11 +13,18 @@ export default function ResetPasswordPage() {
 
   useEffect(() => {
     // Check if we have a valid session from the password reset email
+    // Supabase can send tokens in either hash or query params
     const hashParams = new URLSearchParams(window.location.hash.substring(1))
-    const accessToken = hashParams.get('access_token')
-    const type = hashParams.get('type')
+    const searchParams = new URLSearchParams(window.location.search)
 
-    if (accessToken && type === 'recovery') {
+    const accessToken = hashParams.get('access_token') || searchParams.get('access_token')
+    const type = hashParams.get('type') || searchParams.get('type')
+    const errorParam = hashParams.get('error') || searchParams.get('error')
+    const errorDescription = hashParams.get('error_description') || searchParams.get('error_description')
+
+    if (errorParam) {
+      setError(errorDescription || 'An error occurred. Please try again.')
+    } else if (accessToken && type === 'recovery') {
       setIsValidSession(true)
     } else {
       setError('Invalid or expired reset link. Please request a new password reset.')
