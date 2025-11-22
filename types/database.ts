@@ -77,7 +77,8 @@ export interface Database {
         Row: {
           id: string
           contractor_id: string
-          client_name: string
+          first_name: string
+          last_name: string
           client_phone: string
           client_email: string | null
           client_address_street: string | null
@@ -96,7 +97,8 @@ export interface Database {
         Insert: {
           id?: string
           contractor_id: string
-          client_name: string
+          first_name: string
+          last_name: string
           client_phone: string
           client_email?: string | null
           client_address_street?: string | null
@@ -115,7 +117,8 @@ export interface Database {
         Update: {
           id?: string
           contractor_id?: string
-          client_name?: string
+          first_name?: string
+          last_name?: string
           client_phone?: string
           client_email?: string | null
           client_address_street?: string | null
@@ -190,6 +193,7 @@ export interface Database {
           id: string
           contractor_id: string
           client_id: string
+          group_id: string | null
           project_type: string
           project_description: string
           start_date: string | null
@@ -212,6 +216,7 @@ export interface Database {
           id?: string
           contractor_id: string
           client_id: string
+          group_id?: string | null
           project_type: string
           project_description: string
           start_date?: string | null
@@ -234,6 +239,7 @@ export interface Database {
           id?: string
           contractor_id?: string
           client_id?: string
+          group_id?: string | null
           project_type?: string
           project_description?: string
           start_date?: string | null
@@ -249,6 +255,32 @@ export interface Database {
           project_address_unit?: string | null
           project_address_county?: string | null
           notes?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      project_groups: {
+        Row: {
+          id: string
+          contractor_id: string
+          name: string
+          color: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          contractor_id: string
+          name: string
+          color: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          contractor_id?: string
+          name?: string
+          color?: string
           created_at?: string
           updated_at?: string
         }
