@@ -21,11 +21,11 @@ export default async function DashboardLayout({
   const userRecord = await ensureUserRecord(supabase, user.id)
 
   // Get contractor info separately
-  const { data: contractor } = userRecord ? await supabase
+  const contractor = userRecord ? (await supabase
     .from('contractors')
     .select('name, company_name')
     .eq('id', userRecord.contractor_id)
-    .single() : { data: null }
+    .single()).data : null
 
   return (
     <div className="min-h-screen bg-gray-50">
