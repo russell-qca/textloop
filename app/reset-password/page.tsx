@@ -4,31 +4,47 @@ import { updatePassword } from '@/app/auth/actions'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client'
 
 export default function ResetPasswordPage() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [isValidSession, setIsValidSession] = useState(false)
+  const [checkingSession, setCheckingSession] = useState(true)
   const router = useRouter()
 
   useEffect(() => {
-    // Check if we have a valid session from the password reset email
-    // Supabase can send tokens in either hash or query params
-    const hashParams = new URLSearchParams(window.location.hash.substring(1))
-    const searchParams = new URLSearchParams(window.location.search)
+    const checkSession = async () => {
+      const supabase = createClient()
 
-    const accessToken = hashParams.get('access_token') || searchParams.get('access_token')
-    const type = hashParams.get('type') || searchParams.get('type')
-    const errorParam = hashParams.get('error') || searchParams.get('error')
-    const errorDescription = hashParams.get('error_description') || searchParams.get('error_description')
+      // Check for error in URL params first
+      const hashParams = new URLSearchParams(window.location.hash.substring(1))
+      const searchParams = new URLSearchParams(window.location.search)
+      const errorParam = hashParams.get('error') || searchParams.get('error')
+      const errorDescription = hashParams.get('error_description') || searchParams.get('error_description')
 
-    if (errorParam) {
-      setError(errorDescription || 'An error occurred. Please try again.')
-    } else if (accessToken && type === 'recovery') {
-      setIsValidSession(true)
-    } else {
-      setError('Invalid or expired reset link. Please request a new password reset.')
+      if (errorParam) {
+        setError(errorDescription || 'An error occurred. Please try again.')
+        setCheckingSession(false)
+        return
+      }
+
+      // Wait a bit for Supabase to process the token from URL
+      await new Promise(resolve => setTimeout(resolve, 500))
+
+      // Check if user has a valid session
+      const { data: { user }, error: sessionError } = await supabase.auth.getUser()
+
+      if (sessionError || !user) {
+        setError('Invalid or expired reset link. Please request a new password reset.')
+        setCheckingSession(false)
+      } else {
+        setIsValidSession(true)
+        setCheckingSession(false)
+      }
     }
+
+    checkSession()
   }, [])
 
   async function handleSubmit(formData: FormData) {
@@ -57,6 +73,23 @@ export default function ResetPasswordPage() {
       setLoading(false)
     }
     // If successful, the action will redirect to dashboard
+  }
+
+  if (checkingSession) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full space-y-8 text-center">
+          <div>
+            <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+              Reset Password
+            </h2>
+            <p className="mt-2 text-sm text-gray-600">
+              Verifying reset link...
+            </p>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   if (!isValidSession && error) {
