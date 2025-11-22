@@ -71,7 +71,7 @@ export default async function AcceptQuotePage({
   const resolvedParams = await params
 
   // Get quote details by token (no auth required - public page)
-  const { data: quote } = await supabase
+  const quote = (await supabase
     .from('quotes')
     .select(`
       id,
@@ -83,17 +83,17 @@ export default async function AcceptQuotePage({
       valid_until,
       status,
       acceptance_token,
-      contractors (
+      contractors!inner (
         company_name,
         name,
         phone
       ),
-      clients (
+      clients!inner (
         client_name
       )
     `)
     .eq('acceptance_token', resolvedParams.token)
-    .single()
+    .single()).data
 
   // Get quote items
   let quoteItems = null
