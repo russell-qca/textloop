@@ -71,7 +71,7 @@ export default async function AcceptQuotePage({
   const resolvedParams = await params
 
   // Get quote details by token (no auth required - public page)
-  const quote = (await supabase
+  const { data: quoteData } = await supabase
     .from('quotes')
     .select(`
       id,
@@ -83,17 +83,37 @@ export default async function AcceptQuotePage({
       valid_until,
       status,
       acceptance_token,
-      contractors!inner (
-        company_name,
-        name,
-        phone
-      ),
-      clients!inner (
-        client_name
-      )
+      contractor_id,
+      client_id
     `)
     .eq('acceptance_token', resolvedParams.token)
-    .single()).data
+    .single()
+
+  let contractor = null
+  let client = null
+
+  if (quoteData) {
+    const { data: contractorData } = await supabase
+      .from('contractors')
+      .select('company_name, name, phone')
+      .eq('id', quoteData.contractor_id)
+      .single()
+
+    const { data: clientData } = await supabase
+      .from('clients')
+      .select('client_name')
+      .eq('id', quoteData.client_id)
+      .single()
+
+    contractor = contractorData
+    client = clientData
+  }
+
+  const quote = quoteData ? {
+    ...quoteData,
+    contractors: contractor,
+    clients: client
+  } : null
 
   // Get quote items
   let quoteItems = null
@@ -134,7 +154,7 @@ export default async function AcceptQuotePage({
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">
-            {Array.isArray(quote.contractors) ? (quote.contractors[0]?.company_name || quote.contractors[0]?.name) : (quote.contractors?.company_name || quote.contractors?.name)}
+            {quote.contractors?.company_name || quote.contractors?.name}
           </h1>
           <p className="mt-2 text-lg text-gray-600">Quote Details</p>
         </div>
@@ -169,7 +189,7 @@ export default async function AcceptQuotePage({
               <h2 className="text-2xl font-bold text-gray-900 mb-2">
                 {quote.quote_title || 'Quote'}
               </h2>
-              <p className="text-gray-600">For: {Array.isArray(quote.clients) ? quote.clients[0]?.client_name : quote.clients?.client_name}</p>
+              <p className="text-gray-600">For: {quote.clients?.client_name}</p>
             </div>
 
             {quote.quote_summary && (
@@ -298,9 +318,9 @@ export default async function AcceptQuotePage({
           {/* Footer */}
           <div className="bg-gray-50 px-6 py-4 border-t border-gray-200">
             <p className="text-sm text-gray-600 text-center">
-              Questions? Contact {Array.isArray(quote.contractors) ? (quote.contractors[0]?.company_name || quote.contractors[0]?.name) : (quote.contractors?.company_name || quote.contractors?.name)}
-              {(Array.isArray(quote.contractors) ? quote.contractors[0]?.phone : quote.contractors?.phone) && (
-                <> at <a href={`tel:${Array.isArray(quote.contractors) ? quote.contractors[0].phone : quote.contractors.phone}`} className="text-blue-600 hover:underline">{Array.isArray(quote.contractors) ? quote.contractors[0].phone : quote.contractors.phone}</a></>
+              Questions? Contact {quote.contractors?.company_name || quote.contractors?.name}
+              {quote.contractors?.phone && (
+                <> at <a href={`tel:${quote.contractors.phone}`} className="text-blue-600 hover:underline">{quote.contractors.phone}</a></>
               )}
             </p>
           </div>
