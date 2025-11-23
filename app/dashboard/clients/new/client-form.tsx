@@ -5,7 +5,8 @@ import AddressAutocomplete from '@/app/components/address-autocomplete'
 import PhoneInput from '@/app/components/phone-input'
 
 interface ExistingClient {
-  client_name: string
+  first_name: string
+  last_name: string
   client_phone: string
   client_email: string | null
   client_address_street: string | null
@@ -45,17 +46,32 @@ export default function ClientForm({ createClientAction, existingClient, isEditi
           </h3>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
             <div>
-              <label htmlFor="client_name" className="block text-sm font-medium text-gray-700">
-                Client Name *
+              <label htmlFor="first_name" className="block text-sm font-medium text-gray-700">
+                First Name *
               </label>
               <input
                 type="text"
-                name="client_name"
-                id="client_name"
+                name="first_name"
+                id="first_name"
                 required
-                defaultValue={existingClient?.client_name || ''}
+                defaultValue={existingClient?.first_name || ''}
                 className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm text-gray-900"
-                placeholder="John Smith"
+                placeholder="John"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="last_name" className="block text-sm font-medium text-gray-700">
+                Last Name *
+              </label>
+              <input
+                type="text"
+                name="last_name"
+                id="last_name"
+                required
+                defaultValue={existingClient?.last_name || ''}
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm text-gray-900"
+                placeholder="Smith"
               />
             </div>
 

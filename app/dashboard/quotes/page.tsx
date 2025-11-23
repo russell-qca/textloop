@@ -27,7 +27,8 @@ export default async function QuotesPage({
     .select(`
       *,
       clients (
-        client_name,
+        first_name,
+        last_name,
         client_phone
       )
     `)
@@ -47,12 +48,14 @@ export default async function QuotesPage({
     const term = searchTerm.toLowerCase()
     const title = quote.quote_title?.toLowerCase() || ''
     const summary = quote.quote_summary?.toLowerCase() || ''
-    const clientName = quote.clients?.client_name?.toLowerCase() || ''
+    const clientFirstName = quote.clients?.first_name?.toLowerCase() || ''
+    const clientLastName = quote.clients?.last_name?.toLowerCase() || ''
     const clientPhone = quote.clients?.client_phone?.toLowerCase() || ''
 
     return title.includes(term) ||
            summary.includes(term) ||
-           clientName.includes(term) ||
+           clientFirstName.includes(term) ||
+           clientLastName.includes(term) ||
            clientPhone.includes(term)
   }) || []
 
@@ -132,7 +135,7 @@ export default async function QuotesPage({
                 <tr key={quote.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm font-medium text-gray-900">
-                      {quote.clients?.client_name}
+                      {quote.clients?.first_name} {quote.clients?.last_name}
                     </div>
                     <div className="text-sm text-gray-500">
                       {quote.clients?.client_phone}

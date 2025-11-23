@@ -166,7 +166,8 @@ export default async function ProjectDetailPage({ params }: { params: { id: stri
       *,
       clients (
         id,
-        client_name,
+        first_name,
+        last_name,
         client_phone,
         client_email,
         client_address_street,
@@ -222,7 +223,7 @@ export default async function ProjectDetailPage({ params }: { params: { id: stri
         <div className="flex justify-between items-start">
           <div>
             <h1 className="text-2xl font-semibold text-gray-900">{project.project_type}</h1>
-            <p className="mt-1 text-sm text-gray-600">{project.clients?.client_name}</p>
+            <p className="mt-1 text-sm text-gray-600">{project.clients?.first_name} {project.clients?.last_name}</p>
           </div>
           <span
             className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
@@ -257,7 +258,7 @@ export default async function ProjectDetailPage({ params }: { params: { id: stri
             <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
                 <dt className="text-sm font-medium text-gray-500">Name</dt>
-                <dd className="mt-1 text-sm text-gray-900">{project.clients?.client_name}</dd>
+                <dd className="mt-1 text-sm text-gray-900">{project.clients?.first_name} {project.clients?.last_name}</dd>
               </div>
               <div>
                 <dt className="text-sm font-medium text-gray-500">Phone</dt>

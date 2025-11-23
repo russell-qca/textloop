@@ -27,7 +27,8 @@ export default async function ProjectsPage({
     .select(`
       *,
       clients (
-        client_name,
+        first_name,
+        last_name,
         client_phone
       )
     `)
@@ -49,14 +50,16 @@ export default async function ProjectsPage({
     const description = project.project_description?.toLowerCase() || ''
     const street = project.project_address_street?.toLowerCase() || ''
     const city = project.project_address_city?.toLowerCase() || ''
-    const clientName = project.clients?.client_name?.toLowerCase() || ''
+    const clientFirstName = project.clients?.first_name?.toLowerCase() || ''
+    const clientLastName = project.clients?.last_name?.toLowerCase() || ''
     const clientPhone = project.clients?.client_phone?.toLowerCase() || ''
 
     return type.includes(term) ||
            description.includes(term) ||
            street.includes(term) ||
            city.includes(term) ||
-           clientName.includes(term) ||
+           clientFirstName.includes(term) ||
+           clientLastName.includes(term) ||
            clientPhone.includes(term)
   }) || []
 
@@ -135,7 +138,7 @@ export default async function ProjectsPage({
                 <tr key={project.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm font-medium text-gray-900">
-                      {project.clients?.client_name}
+                      {project.clients?.first_name} {project.clients?.last_name}
                     </div>
                     <div className="text-sm text-gray-500">
                       {project.clients?.client_phone}

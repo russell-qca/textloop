@@ -87,7 +87,7 @@ async function createQuote(formData: FormData) {
   // Get client info for message personalization and status update
   const { data: client } = await supabase
     .from('clients')
-    .select('client_name, visit_date, status')
+    .select('first_name, visit_date, status')
     .eq('id', clientId)
     .single()
 
@@ -104,31 +104,31 @@ async function createQuote(formData: FormData) {
     const messages = [
       {
         quote_id: quote.id,
-        message_text: `Hi ${client.client_name}, thanks for considering us! I'll have your estimate ready soon.`,
+        message_text: `Hi ${client.first_name}, thanks for considering us! I'll have your estimate ready soon.`,
         sequence_day: 1,
         scheduled_for: new Date(dateQuoted).toISOString(),
       },
       {
         quote_id: quote.id,
-        message_text: `Hi ${client.client_name}, your estimate is ready. Have you had a chance to review it?`,
+        message_text: `Hi ${client.first_name}, your estimate is ready. Have you had a chance to review it?`,
         sequence_day: 3,
         scheduled_for: new Date(new Date(dateQuoted).getTime() + 3 * 24 * 60 * 60 * 1000).toISOString(),
       },
       {
         quote_id: quote.id,
-        message_text: `Hi ${client.client_name}, just checking in on the estimate. Do you have any questions I can answer?`,
+        message_text: `Hi ${client.first_name}, just checking in on the estimate. Do you have any questions I can answer?`,
         sequence_day: 5,
         scheduled_for: new Date(new Date(dateQuoted).getTime() + 5 * 24 * 60 * 60 * 1000).toISOString(),
       },
       {
         quote_id: quote.id,
-        message_text: `Hi ${client.client_name}, wanted to follow up one more time. We'd love to work with you!`,
+        message_text: `Hi ${client.first_name}, wanted to follow up one more time. We'd love to work with you!`,
         sequence_day: 8,
         scheduled_for: new Date(new Date(dateQuoted).getTime() + 8 * 24 * 60 * 60 * 1000).toISOString(),
       },
       {
         quote_id: quote.id,
-        message_text: `Hi ${client.client_name}, this is my final follow-up about the estimate. If you'd like to move forward, just let me know!`,
+        message_text: `Hi ${client.first_name}, this is my final follow-up about the estimate. If you'd like to move forward, just let me know!`,
         sequence_day: 12,
         scheduled_for: new Date(new Date(dateQuoted).getTime() + 12 * 24 * 60 * 60 * 1000).toISOString(),
       },
@@ -158,9 +158,9 @@ export default async function NewQuotePage({
   // Get all clients for the dropdown
   const { data: clients } = await supabase
     .from('clients')
-    .select('id, client_name, client_phone')
+    .select('id, first_name, last_name, client_phone')
     .eq('contractor_id', user.id)
-    .order('client_name', { ascending: true })
+    .order('first_name', { ascending: true })
 
   return (
     <div>

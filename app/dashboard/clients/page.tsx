@@ -31,7 +31,7 @@ export default async function ClientsPage({
   // Apply search filter
   if (searchTerm) {
     query = query.or(
-      `client_name.ilike.%${searchTerm}%,client_phone.ilike.%${searchTerm}%,client_email.ilike.%${searchTerm}%,client_address_city.ilike.%${searchTerm}%`
+      `first_name.ilike.%${searchTerm}%,last_name.ilike.%${searchTerm}%,client_phone.ilike.%${searchTerm}%,client_email.ilike.%${searchTerm}%,client_address_city.ilike.%${searchTerm}%`
     )
   }
 
@@ -118,7 +118,7 @@ export default async function ClientsPage({
                 <tr key={client.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm font-medium text-gray-900">
-                      {client.client_name}
+                      {client.first_name} {client.last_name}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">

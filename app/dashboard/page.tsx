@@ -55,7 +55,8 @@ export default async function DashboardPage() {
     .select(`
       *,
       clients (
-        client_name
+        first_name,
+        last_name
       )
     `)
     .eq('contractor_id', contractorId)
@@ -168,7 +169,7 @@ export default async function DashboardPage() {
                       <div className="flex items-center justify-between">
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium text-gray-900 truncate">
-                            {quote.clients?.client_name}
+                            {quote.clients?.first_name} {quote.clients?.last_name}
                           </p>
                           <p className="text-sm text-gray-500">
                             ${quote.quote_amount.toLocaleString()} - {new Date(quote.date_quoted).toLocaleDateString()}

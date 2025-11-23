@@ -86,9 +86,9 @@ export default async function EditProjectPage({ params }: { params: { id: string
   // Get all clients for the dropdown
   const { data: clients } = await supabase
     .from('clients')
-    .select('id, client_name, client_phone')
+    .select('id, first_name, last_name, client_phone')
     .eq('contractor_id', user.id)
-    .order('client_name', { ascending: true })
+    .order('first_name', { ascending: true })
 
   return (
     <div>

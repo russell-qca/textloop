@@ -50,7 +50,7 @@ export default async function ClientDetailPage({ params }: { params: { id: strin
         </Link>
         <div className="flex justify-between items-start">
           <div>
-            <h1 className="text-2xl font-semibold text-gray-900">{client.client_name}</h1>
+            <h1 className="text-2xl font-semibold text-gray-900">{client.first_name} {client.last_name}</h1>
             <p className="mt-1 text-sm text-gray-600">{formatPhoneNumber(client.client_phone)}</p>
           </div>
           <span

@@ -29,7 +29,8 @@ async function addClient(formData: FormData) {
 
   const clientData = {
     contractor_id: userRecord.contractor_id,
-    client_name: formData.get('client_name') as string,
+    first_name: formData.get('first_name') as string,
+    last_name: formData.get('last_name') as string,
     client_phone: formData.get('client_phone') as string,
     client_email: formData.get('client_email') as string || null,
     client_address_street: formData.get('client_address_street') as string || null,

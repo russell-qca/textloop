@@ -96,7 +96,7 @@ async function duplicateQuote(quoteId: string) {
   // Get client info for message personalization
   const { data: client } = await supabase
     .from('clients')
-    .select('client_name')
+    .select('first_name')
     .eq('id', originalQuote.client_id)
     .single()
 
@@ -106,31 +106,31 @@ async function duplicateQuote(quoteId: string) {
     const messages = [
       {
         quote_id: newQuote.id,
-        message_text: `Hi ${client.client_name}, thanks for considering us! I'll have your estimate ready soon.`,
+        message_text: `Hi ${client.first_name}, thanks for considering us! I'll have your estimate ready soon.`,
         sequence_day: 1,
         scheduled_for: new Date(dateQuoted).toISOString(),
       },
       {
         quote_id: newQuote.id,
-        message_text: `Hi ${client.client_name}, your estimate is ready. Have you had a chance to review it?`,
+        message_text: `Hi ${client.first_name}, your estimate is ready. Have you had a chance to review it?`,
         sequence_day: 3,
         scheduled_for: new Date(new Date(dateQuoted).getTime() + 3 * 24 * 60 * 60 * 1000).toISOString(),
       },
       {
         quote_id: newQuote.id,
-        message_text: `Hi ${client.client_name}, just checking in on the estimate. Do you have any questions I can answer?`,
+        message_text: `Hi ${client.first_name}, just checking in on the estimate. Do you have any questions I can answer?`,
         sequence_day: 5,
         scheduled_for: new Date(new Date(dateQuoted).getTime() + 5 * 24 * 60 * 60 * 1000).toISOString(),
       },
       {
         quote_id: newQuote.id,
-        message_text: `Hi ${client.client_name}, wanted to follow up one more time. We'd love to work with you!`,
+        message_text: `Hi ${client.first_name}, wanted to follow up one more time. We'd love to work with you!`,
         sequence_day: 8,
         scheduled_for: new Date(new Date(dateQuoted).getTime() + 8 * 24 * 60 * 60 * 1000).toISOString(),
       },
       {
         quote_id: newQuote.id,
-        message_text: `Hi ${client.client_name}, this is my final follow-up about the estimate. If you'd like to move forward, just let me know!`,
+        message_text: `Hi ${client.first_name}, this is my final follow-up about the estimate. If you'd like to move forward, just let me know!`,
         sequence_day: 12,
         scheduled_for: new Date(new Date(dateQuoted).getTime() + 12 * 24 * 60 * 60 * 1000).toISOString(),
       },
@@ -171,7 +171,8 @@ async function emailQuote(quoteId: string) {
     .select(`
       *,
       clients (
-        client_name,
+        first_name,
+        last_name,
         client_email
       )
     `)
@@ -215,7 +216,7 @@ async function emailQuote(quoteId: string) {
       quoteSummary: quote.quote_summary,
       quoteDescription: quote.quote_description,
       quoteAmount: quote.quote_amount,
-      clientName: quote.clients.client_name,
+      clientName: `${quote.clients.first_name} ${quote.clients.last_name}`,
       companyName: contractor.company_name || contractor.name,
       dateQuoted: quote.date_quoted,
       validUntil: quote.valid_until,
@@ -255,7 +256,8 @@ export default async function QuoteDetailPage({ params }: { params: { id: string
       *,
       clients (
         id,
-        client_name,
+        first_name,
+        last_name,
         client_phone,
         client_email,
         client_address_street,
@@ -299,7 +301,7 @@ export default async function QuoteDetailPage({ params }: { params: { id: string
         <div className="flex justify-between items-start">
           <div>
             <h1 className="text-2xl font-semibold text-gray-900">
-              Quote for {quote.clients?.client_name}
+              Quote for {quote.clients?.first_name} {quote.clients?.last_name}
             </h1>
             <p className="mt-1 text-sm text-gray-600">
               ${quote.quote_amount.toLocaleString()}
@@ -340,7 +342,7 @@ export default async function QuoteDetailPage({ params }: { params: { id: string
             <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
                 <dt className="text-sm font-medium text-gray-500">Name</dt>
-                <dd className="mt-1 text-sm text-gray-900">{quote.clients?.client_name}</dd>
+                <dd className="mt-1 text-sm text-gray-900">{quote.clients?.first_name} {quote.clients?.last_name}</dd>
               </div>
               <div>
                 <dt className="text-sm font-medium text-gray-500">Phone</dt>

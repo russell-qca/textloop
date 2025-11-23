@@ -93,7 +93,7 @@ export default async function AcceptQuotePage({
 
     const { data: clientData } = await supabase
       .from('clients')
-      .select('client_name')
+      .select('first_name, last_name')
       .eq('id', quoteData.client_id)
       .single()
 
@@ -181,7 +181,7 @@ export default async function AcceptQuotePage({
               <h2 className="text-2xl font-bold text-gray-900 mb-2">
                 {quote.quote_title || 'Quote'}
               </h2>
-              <p className="text-gray-600">For: {quote.clients?.client_name}</p>
+              <p className="text-gray-600">For: {quote.clients?.first_name} {quote.clients?.last_name}</p>
             </div>
 
             {quote.quote_summary && (

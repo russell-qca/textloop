@@ -6,7 +6,8 @@ import { formatPhoneNumber } from '@/lib/format-phone'
 
 interface Client {
   id: string
-  client_name: string
+  first_name: string
+  last_name: string
   client_phone: string
 }
 
@@ -77,7 +78,7 @@ export default function ProjectForm({
                   <option value="">Select a client...</option>
                   {clients.map((client) => (
                     <option key={client.id} value={client.id}>
-                      {client.client_name} - {formatPhoneNumber(client.client_phone)}
+                      {client.first_name} {client.last_name} - {formatPhoneNumber(client.client_phone)}
                     </option>
                   ))}
                 </select>
