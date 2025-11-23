@@ -30,6 +30,7 @@ async function createProject(formData: FormData) {
   }
 
   const clientId = formData.get('client_id') as string
+  const groupId = formData.get('group_id') as string || null
   const projectType = formData.get('project_type') as string
   const projectDescription = formData.get('project_description') as string
   const startDate = formData.get('start_date') as string || null
@@ -62,6 +63,7 @@ async function createProject(formData: FormData) {
     .insert({
       contractor_id: userRecord.contractor_id,
       client_id: clientId,
+      group_id: groupId,
       project_type: projectType,
       project_description: projectDescription,
       start_date: startDate,
@@ -125,6 +127,13 @@ export default async function NewProjectPage({
     .eq('contractor_id', user.id)
     .order('first_name', { ascending: true })
 
+  // Get all groups for the dropdown
+  const { data: groups } = await supabase
+    .from('project_groups')
+    .select('id, name, color')
+    .eq('contractor_id', user.id)
+    .order('name', { ascending: true })
+
   return (
     <div>
       <div className="mb-8">
@@ -136,6 +145,7 @@ export default async function NewProjectPage({
 
       <ProjectForm
         clients={clients}
+        groups={groups}
         preselectedClientId={preselectedClientId}
         createProjectAction={createProject}
       />

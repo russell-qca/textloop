@@ -42,6 +42,9 @@ export default async function DashboardLayout({
                 <NavLink href="/dashboard">
                   Dashboard
                 </NavLink>
+                <NavLink href="/dashboard/calendar">
+                  Calendar
+                </NavLink>
                 <NavLink href="/dashboard/clients">
                   Clients
                 </NavLink>
@@ -50,6 +53,9 @@ export default async function DashboardLayout({
                 </NavLink>
                 <NavLink href="/dashboard/projects">
                   Projects
+                </NavLink>
+                <NavLink href="/dashboard/groups">
+                  Groups
                 </NavLink>
                 <NavLink href="/dashboard/team">
                   Team
