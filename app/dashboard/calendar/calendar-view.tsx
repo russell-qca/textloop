@@ -176,14 +176,18 @@ export default function CalendarView({ projects }: CalendarViewProps) {
   // Handle event drop (drag and drop)
   const handleEventDrop = ({ event, start, end }: EventInteractionArgs<CalendarEvent>) => {
     startTransition(async () => {
-      await updateProjectDates(event.resource.projectId, start.toISOString(), end.toISOString())
+      const startDate = start instanceof Date ? start : new Date(start)
+      const endDate = end instanceof Date ? end : new Date(end)
+      await updateProjectDates(event.resource.projectId, startDate.toISOString(), endDate.toISOString())
     })
   }
 
   // Handle event resize
   const handleEventResize = ({ event, start, end }: EventInteractionArgs<CalendarEvent>) => {
     startTransition(async () => {
-      await updateProjectDates(event.resource.projectId, start.toISOString(), end.toISOString())
+      const startDate = start instanceof Date ? start : new Date(start)
+      const endDate = end instanceof Date ? end : new Date(end)
+      await updateProjectDates(event.resource.projectId, startDate.toISOString(), endDate.toISOString())
     })
   }
 
