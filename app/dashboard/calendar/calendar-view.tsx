@@ -23,11 +23,59 @@ const localizer = dateFnsLocalizer({
 
 const DnDCalendar = withDragAndDrop(Calendar)
 
+// Helper function to split a date range into weekday-only segments
+function splitIntoWeekdaySegments(start: Date, end: Date): Array<{ start: Date; end: Date }> {
+  const segments: Array<{ start: Date; end: Date }> = []
+  let currentStart = new Date(start)
+
+  while (currentStart <= end) {
+    const day = currentStart.getDay()
+
+    // Skip weekends (0 = Sunday, 6 = Saturday)
+    if (day === 0 || day === 6) {
+      currentStart.setDate(currentStart.getDate() + 1)
+      continue
+    }
+
+    // Start a new segment
+    let segmentStart = new Date(currentStart)
+    let segmentEnd = new Date(currentStart)
+
+    // Extend segment through consecutive weekdays
+    while (segmentEnd <= end) {
+      const nextDay = new Date(segmentEnd)
+      nextDay.setDate(nextDay.getDate() + 1)
+      const nextDayOfWeek = nextDay.getDay()
+
+      // Stop if next day is weekend or beyond end date
+      if (nextDayOfWeek === 0 || nextDayOfWeek === 6 || nextDay > end) {
+        break
+      }
+
+      segmentEnd = nextDay
+    }
+
+    // Don't let segment end go beyond the project end date
+    if (segmentEnd > end) {
+      segmentEnd = new Date(end)
+    }
+
+    segments.push({ start: segmentStart, end: segmentEnd })
+
+    // Move to next day after this segment
+    currentStart = new Date(segmentEnd)
+    currentStart.setDate(currentStart.getDate() + 1)
+  }
+
+  return segments
+}
+
 interface CalendarProject {
   id: string
   project_type: string
   start_date: string | null
   end_date: string | null
+  exclude_weekends: boolean
   group_id: string | null
   clients: {
     first_name: string
@@ -60,9 +108,11 @@ export default function CalendarView({ projects }: CalendarViewProps) {
 
   // Convert projects to calendar events
   const events: CalendarEvent[] = useMemo(() => {
-    return projects
+    const allEvents: CalendarEvent[] = []
+
+    projects
       .filter(project => project.start_date && project.end_date) // Only show projects with dates
-      .map(project => {
+      .forEach(project => {
         const clientName = project.clients
           ? `${project.clients.first_name} ${project.clients.last_name}`
           : 'Unknown Client'
@@ -70,17 +120,41 @@ export default function CalendarView({ projects }: CalendarViewProps) {
         // Get color from group, or use light gray if unassigned
         const color = project.project_groups?.color || '#d1d5db'
 
-        return {
-          id: project.id,
-          title: `${project.project_type} - ${project.clients?.last_name || 'Unknown'}`,
-          start: new Date(project.start_date!),
-          end: new Date(project.end_date!),
-          resource: {
-            projectId: project.id,
-            color: color,
-          },
+        const title = `${project.project_type} - ${project.clients?.last_name || 'Unknown'}`
+        const startDate = new Date(project.start_date!)
+        const endDate = new Date(project.end_date!)
+
+        // If exclude_weekends is true, split into weekday segments
+        if (project.exclude_weekends) {
+          const segments = splitIntoWeekdaySegments(startDate, endDate)
+          segments.forEach((segment, index) => {
+            allEvents.push({
+              id: `${project.id}-segment-${index}`,
+              title,
+              start: segment.start,
+              end: segment.end,
+              resource: {
+                projectId: project.id,
+                color: color,
+              },
+            })
+          })
+        } else {
+          // Normal event spanning full date range
+          allEvents.push({
+            id: project.id,
+            title,
+            start: startDate,
+            end: endDate,
+            resource: {
+              projectId: project.id,
+              color: color,
+            },
+          })
         }
       })
+
+    return allEvents
   }, [projects])
 
   // Custom event style getter

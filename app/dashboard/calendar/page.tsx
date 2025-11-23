@@ -19,6 +19,7 @@ export default async function CalendarPage() {
       project_type,
       start_date,
       end_date,
+      exclude_weekends,
       group_id,
       clients (
         first_name,

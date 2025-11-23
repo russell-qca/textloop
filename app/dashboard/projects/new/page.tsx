@@ -35,6 +35,7 @@ async function createProject(formData: FormData) {
   const projectDescription = formData.get('project_description') as string
   const startDate = formData.get('start_date') as string || null
   const endDate = formData.get('end_date') as string || null
+  const excludeWeekends = formData.get('exclude_weekends') === 'on'
   const projectCost = formData.get('project_cost') ? parseFloat(formData.get('project_cost') as string) : null
   const permitsRequired = formData.get('permits_required') === 'true'
   const permitStatus = formData.get('permit_status') as string || null
@@ -68,6 +69,7 @@ async function createProject(formData: FormData) {
       project_description: projectDescription,
       start_date: startDate,
       end_date: endDate,
+      exclude_weekends: excludeWeekends,
       project_cost: projectCost,
       permits_required: permitsRequired,
       permit_status: permitsRequired ? permitStatus : 'not_applicable',
