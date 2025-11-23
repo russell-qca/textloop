@@ -1,6 +1,6 @@
 'use client'
 
-import { Calendar, dateFnsLocalizer, View } from 'react-big-calendar'
+import { Calendar, dateFnsLocalizer, View, Event } from 'react-big-calendar'
 import withDragAndDrop, { EventInteractionArgs } from 'react-big-calendar/lib/addons/dragAndDrop'
 import { format, parse, startOfWeek, getDay } from 'date-fns'
 import { useState, useMemo, useTransition } from 'react'
@@ -21,7 +21,18 @@ const localizer = dateFnsLocalizer({
   locales,
 })
 
-const DnDCalendar = withDragAndDrop(Calendar)
+interface CalendarEvent extends Event {
+  id: string
+  title: string
+  start: Date
+  end: Date
+  resource: {
+    projectId: string
+    color: string
+  }
+}
+
+const DnDCalendar = withDragAndDrop<CalendarEvent>(Calendar)
 
 // Helper function to split a date range into weekday-only segments
 function splitIntoWeekdaySegments(start: Date, end: Date): Array<{ start: Date; end: Date }> {
@@ -84,17 +95,6 @@ interface CalendarProject {
   project_groups: {
     color: string
   } | null
-}
-
-interface CalendarEvent {
-  id: string
-  title: string
-  start: Date
-  end: Date
-  resource: {
-    projectId: string
-    color: string
-  }
 }
 
 interface CalendarViewProps {
