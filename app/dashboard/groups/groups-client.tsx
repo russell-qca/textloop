@@ -36,9 +36,9 @@ export default function GroupsClient({
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-2xl font-semibold text-gray-900">Work Crews / Project Groups</h1>
+        <h1 className="text-2xl font-semibold text-gray-900">Project Groups</h1>
         <p className="mt-1 text-sm text-gray-600">
-          Organize projects by assigning them to work crews. Each crew has a unique color on the calendar.
+          Organize projects by assigning them to project groups. Each group has a unique color on the calendar.
         </p>
       </div>
 
@@ -46,7 +46,7 @@ export default function GroupsClient({
       <div className="bg-white shadow sm:rounded-lg mb-6">
         <div className="px-4 py-5 sm:p-6">
           <h3 className="text-lg font-medium leading-6 text-gray-900 mb-4">
-            Create New Work Crew
+            Create New Project Group
           </h3>
           <form action={createGroupAction} className="space-y-4">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -99,7 +99,7 @@ export default function GroupsClient({
                 type="submit"
                 className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
               >
-                Create Crew
+                Create Group
               </button>
             </div>
           </form>
@@ -110,7 +110,7 @@ export default function GroupsClient({
       <div className="bg-white shadow overflow-hidden sm:rounded-lg">
         <div className="px-4 py-5 sm:px-6">
           <h3 className="text-lg font-medium leading-6 text-gray-900">
-            Existing Work Crews
+            Existing Project Groups
           </h3>
         </div>
         {groups && groups.length > 0 ? (

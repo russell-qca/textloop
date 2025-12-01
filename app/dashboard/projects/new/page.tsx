@@ -32,6 +32,13 @@ async function createProject(formData: FormData) {
   const projectCost = formData.get('project_cost') ? parseFloat(formData.get('project_cost') as string) : null
   const permitsRequired = formData.get('permits_required') === 'true'
   const permitStatus = formData.get('permit_status') as string || null
+
+  console.log('Permits data:', {
+    permitsRequired,
+    permitStatus,
+    rawPermitStatus: formData.get('permit_status'),
+    finalPermitStatus: permitsRequired ? permitStatus : 'not_applicable'
+  })
   const projectAddressStreet = formData.get('project_address_street') as string || null
   const projectAddressCity = formData.get('project_address_city') as string || null
   const projectAddressState = formData.get('project_address_state') as string || null

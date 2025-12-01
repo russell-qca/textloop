@@ -5,12 +5,21 @@ import { SupabaseClient, createClient } from '@supabase/supabase-js'
  * If not, creates one automatically linking them to their contractor
  */
 export async function ensureUserRecord(supabase: SupabaseClient, userId: string) {
+  console.log('[ensureUserRecord] Called for user:', userId)
+
   // Use service role from the start to bypass RLS issues
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 
+  console.log('[ensureUserRecord] Env check:', {
+    hasServiceKey: !!serviceRoleKey,
+    hasUrl: !!supabaseUrl
+  })
+
   if (!serviceRoleKey || !supabaseUrl) {
-    throw new Error('Missing Supabase service role credentials')
+    const errorMsg = `Missing Supabase credentials - serviceKey: ${!!serviceRoleKey}, url: ${!!supabaseUrl}`
+    console.error('[ensureUserRecord]', errorMsg)
+    throw new Error(errorMsg)
   }
 
   const adminClient = createClient(supabaseUrl, serviceRoleKey, {
