@@ -403,10 +403,9 @@ export default function ProjectForm({
                     name="permit_status"
                     id="permit_status"
                     disabled={!permitsRequired}
-                    defaultValue={existingProject?.permit_status || "not_submitted"}
+                    defaultValue={existingProject?.permit_status || "pending"}
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm text-gray-900 disabled:bg-gray-100"
                   >
-                    <option value="not_submitted">Not Submitted</option>
                     <option value="pending">Pending</option>
                     <option value="approved">Approved</option>
                     <option value="rejected">Rejected</option>
