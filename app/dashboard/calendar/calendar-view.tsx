@@ -122,7 +122,9 @@ export default function CalendarView({ projects }: CalendarViewProps) {
 
         const title = `${project.project_type} - ${project.clients?.last_name || 'Unknown'}`
         const startDate = new Date(project.start_date!)
+        // Add 1 day to end date to make it inclusive (react-big-calendar treats end as exclusive)
         const endDate = new Date(project.end_date!)
+        endDate.setDate(endDate.getDate() + 1)
 
         // If exclude_weekends is true, split into weekday segments
         if (project.exclude_weekends) {
