@@ -19,16 +19,8 @@ async function createProject(formData: FormData) {
 
   console.log('User authenticated:', user.id)
 
-  // Get user's contractor_id
-  const { data: userRecord } = await supabase
-    .from('users')
-    .select('contractor_id')
-    .eq('id', user.id)
-    .single()
-
-  if (!userRecord) {
-    throw new Error('User not found')
-  }
+  // Get user's contractor_id (creates user/contractor records if needed)
+  const userRecord = await ensureUserRecord(supabase, user.id)
 
   const clientId = formData.get('client_id') as string
   const groupId = formData.get('group_id') as string || null
