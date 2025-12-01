@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
+import { ensureUserRecord } from '@/lib/ensure-user-record'
 import ProjectForm from './project-form'
 
 async function createProject(formData: FormData) {
@@ -119,6 +120,8 @@ export default async function NewProjectPage({
 
   if (!user) return null
 
+  const userRecord = await ensureUserRecord(supabase, user.id)
+
   const resolvedSearchParams = await searchParams
   const preselectedClientId = resolvedSearchParams.client_id
 
@@ -126,14 +129,14 @@ export default async function NewProjectPage({
   const { data: clients } = await supabase
     .from('clients')
     .select('id, first_name, last_name, client_phone')
-    .eq('contractor_id', user.id)
+    .eq('contractor_id', userRecord.contractor_id)
     .order('first_name', { ascending: true })
 
   // Get all groups for the dropdown
   const { data: groups } = await supabase
     .from('project_groups')
     .select('id, name, color')
-    .eq('contractor_id', user.id)
+    .eq('contractor_id', userRecord.contractor_id)
     .order('name', { ascending: true })
 
   return (

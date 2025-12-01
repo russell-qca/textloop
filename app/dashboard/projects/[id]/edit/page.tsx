@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
+import { ensureUserRecord } from '@/lib/ensure-user-record'
 import ProjectForm from '../../new/project-form'
 
 async function updateProject(projectId: string, formData: FormData) {
@@ -12,6 +13,8 @@ async function updateProject(projectId: string, formData: FormData) {
   if (!user) {
     redirect('/login')
   }
+
+  const userRecord = await ensureUserRecord(supabase, user.id)
 
   const clientId = formData.get('client_id') as string
   const groupId = formData.get('group_id') as string || null
@@ -54,7 +57,7 @@ async function updateProject(projectId: string, formData: FormData) {
       notes,
     })
     .eq('id', projectId)
-    .eq('contractor_id', user.id)
+    .eq('contractor_id', userRecord.contractor_id)
 
   if (error) {
     console.error('Error updating project:', error)
@@ -73,6 +76,8 @@ export default async function EditProjectPage({ params }: { params: { id: string
 
   if (!user) return null
 
+  const userRecord = await ensureUserRecord(supabase, user.id)
+
   const resolvedParams = await params
 
   // Get the existing project
@@ -80,7 +85,7 @@ export default async function EditProjectPage({ params }: { params: { id: string
     .from('projects')
     .select('*')
     .eq('id', resolvedParams.id)
-    .eq('contractor_id', user.id)
+    .eq('contractor_id', userRecord.contractor_id)
     .single()
 
   if (!project) {
@@ -91,14 +96,14 @@ export default async function EditProjectPage({ params }: { params: { id: string
   const { data: clients } = await supabase
     .from('clients')
     .select('id, first_name, last_name, client_phone')
-    .eq('contractor_id', user.id)
+    .eq('contractor_id', userRecord.contractor_id)
     .order('first_name', { ascending: true })
 
   // Get all groups for the dropdown
   const { data: groups } = await supabase
     .from('project_groups')
     .select('id, name, color')
-    .eq('contractor_id', user.id)
+    .eq('contractor_id', userRecord.contractor_id)
     .order('name', { ascending: true })
 
   return (
