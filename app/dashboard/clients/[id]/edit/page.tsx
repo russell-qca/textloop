@@ -15,12 +15,11 @@ async function updateClient(clientId: string, formData: FormData) {
 
   const visitDate = formData.get('visit_date') as string || null
 
-  // Check if client has any quotes
+  // Get all quotes for this client (for revalidation and status check)
   const { data: quotes } = await supabase
     .from('quotes')
     .select('id')
     .eq('client_id', clientId)
-    .limit(1)
 
   const hasQuotes = quotes && quotes.length > 0
 
@@ -61,8 +60,18 @@ async function updateClient(clientId: string, formData: FormData) {
     throw new Error(`Failed to update client: ${error.message}`)
   }
 
+  // Revalidate client pages
   revalidatePath(`/dashboard/clients/${clientId}`)
   revalidatePath('/dashboard/clients')
+
+  // Revalidate all quote pages for this client (so email changes are reflected)
+  if (quotes && quotes.length > 0) {
+    for (const quote of quotes) {
+      revalidatePath(`/dashboard/quotes/${quote.id}`)
+    }
+  }
+  revalidatePath('/dashboard/quotes')
+
   redirect(`/dashboard/clients/${clientId}`)
 }
 
