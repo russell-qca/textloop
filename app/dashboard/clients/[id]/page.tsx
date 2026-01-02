@@ -25,11 +25,12 @@ export default async function ClientDetailPage({ params }: { params: { id: strin
     redirect('/dashboard/clients')
   }
 
-  // Get quotes for this client
+  // Get quotes for this client (exclude voided)
   const { data: quotes } = await supabase
     .from('quotes')
     .select('*')
     .eq('client_id', client.id)
+    .neq('status', 'void')
     .order('date_quoted', { ascending: false })
 
   // Get projects for this client

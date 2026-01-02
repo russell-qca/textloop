@@ -27,11 +27,12 @@ export default async function DashboardPage() {
     .eq('id', contractorId)
     .single()
 
-  // Get quotes statistics
+  // Get quotes statistics (exclude voided quotes)
   const { data: quotes } = await supabase
     .from('quotes')
     .select('*')
     .eq('contractor_id', contractorId)
+    .neq('status', 'void')
 
   const pendingQuotes = quotes?.filter(quote => quote.status === 'pending') || []
   const acceptedQuotes = quotes?.filter(quote => quote.status === 'accepted') || []
@@ -49,7 +50,7 @@ export default async function DashboardPage() {
   const activeProjects = projects?.filter(project => project.status === 'active') || []
   const completedProjects = projects?.filter(project => project.status === 'completed') || []
 
-  // Get recent activity (recent quotes)
+  // Get recent activity (recent quotes, exclude voided)
   const { data: recentQuotes } = await supabase
     .from('quotes')
     .select(`
@@ -60,6 +61,7 @@ export default async function DashboardPage() {
       )
     `)
     .eq('contractor_id', contractorId)
+    .neq('status', 'void')
     .order('created_at', { ascending: false })
     .limit(5)
 

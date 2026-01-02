@@ -36,7 +36,11 @@ export default async function QuotesPage({
 
   // Apply status filter
   if (statusFilter.length > 0) {
+    // User has explicitly selected status filters, use them
     query = query.in('status', statusFilter)
+  } else {
+    // By default, exclude voided quotes
+    query = query.neq('status', 'void')
   }
 
   const { data: allQuotes } = await query.order('created_at', { ascending: false })
