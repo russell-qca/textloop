@@ -270,6 +270,7 @@ export default function SettingsForm({ contractor }: SettingsFormProps) {
             Your Twilio phone number for sending SMS messages
           </p>
         </div>
+        </div>
       </div>
 
       <div className="flex justify-end">
