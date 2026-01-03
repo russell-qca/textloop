@@ -23,7 +23,7 @@ export default async function DashboardLayout({
   // Get contractor info separately
   const contractor = userRecord ? (await supabase
     .from('contractors')
-    .select('name, company_name')
+    .select('name, company_name, logo_url')
     .eq('id', userRecord.contractor_id)
     .single()).data : null
 
@@ -33,10 +33,25 @@ export default async function DashboardLayout({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex">
-              <div className="flex-shrink-0 flex items-center">
+              <div className="flex-shrink-0 flex items-center space-x-4">
                 <Link href="/dashboard" className="text-2xl font-bold text-blue-600">
                   TextLoop
                 </Link>
+                {contractor?.logo_url && (
+                  <div className="flex items-center">
+                    <div className="h-8 w-px bg-gray-300 mx-3"></div>
+                    <img
+                      src={contractor.logo_url}
+                      alt={contractor.company_name || 'Company logo'}
+                      className="h-10 w-auto object-contain"
+                    />
+                    {contractor.company_name && (
+                      <span className="ml-2 text-sm font-medium text-gray-700">
+                        {contractor.company_name}
+                      </span>
+                    )}
+                  </div>
+                )}
               </div>
               <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
                 <NavLink href="/dashboard">
