@@ -33,25 +33,10 @@ export default async function DashboardLayout({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex">
-              <div className="flex-shrink-0 flex items-center space-x-4">
+              <div className="flex-shrink-0 flex items-center">
                 <Link href="/dashboard" className="text-2xl font-bold text-blue-600">
                   TextLoop
                 </Link>
-                {contractor?.logo_url && (
-                  <div className="flex items-center">
-                    <div className="h-8 w-px bg-gray-300 mx-3"></div>
-                    <img
-                      src={contractor.logo_url}
-                      alt={contractor.company_name || 'Company logo'}
-                      className="h-10 w-auto object-contain"
-                    />
-                    {contractor.company_name && (
-                      <span className="ml-2 text-sm font-medium text-gray-700">
-                        {contractor.company_name}
-                      </span>
-                    )}
-                  </div>
-                )}
               </div>
               <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
                 <NavLink href="/dashboard">
@@ -103,6 +88,27 @@ export default async function DashboardLayout({
           </div>
         </div>
       </nav>
+
+      {/* Company Branding Bar */}
+      {contractor?.logo_url && (
+        <div className="bg-white border-b border-gray-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <div className="flex items-center">
+              <img
+                src={contractor.logo_url}
+                alt={contractor.company_name || 'Company logo'}
+                className="h-12 w-auto object-contain"
+              />
+              {contractor.company_name && (
+                <span className="ml-3 text-lg font-semibold text-gray-900">
+                  {contractor.company_name}
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       <main className="py-10">
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
           {children}
