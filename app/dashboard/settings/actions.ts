@@ -63,7 +63,11 @@ export async function updateContractorSettings(formData: FormData) {
 
       if (uploadError) {
         console.error('Error uploading logo:', uploadError)
-        return { success: false, error: 'Failed to upload logo' }
+        // Provide more specific error messages
+        if (uploadError.message.includes('not found') || uploadError.message.includes('does not exist')) {
+          return { success: false, error: 'Storage bucket not configured. Please contact support or check setup documentation.' }
+        }
+        return { success: false, error: `Failed to upload logo: ${uploadError.message}` }
       }
 
       // Get public URL

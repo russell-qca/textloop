@@ -3,16 +3,41 @@
 ## Overview
 This feature allows contractors to upload their company logo and add their business address in the settings page. The logo appears in the navigation bar alongside the TextLoop branding.
 
-## Database Migration
+## Quick Setup (Recommended)
 
-### Step 1: Apply the Migration
-Run migration `022_add_contractor_branding.sql` in your Supabase SQL Editor:
+### One-Step Setup
+Run the complete setup script `022_setup_complete_branding.sql` in your Supabase SQL Editor:
 
 1. Go to your [Supabase Dashboard](https://app.supabase.com)
 2. Select your TextLoop project
 3. Navigate to: **SQL Editor**
-4. Copy and paste the contents of `supabase/migrations/022_add_contractor_branding.sql`
+4. Copy and paste the contents of `supabase/migrations/022_setup_complete_branding.sql`
 5. Click **Run**
+
+This single script does EVERYTHING:
+- Adds branding fields to `contractors` table (logo_url, street_address, address_unit, zip_code)
+- Creates the `public` storage bucket
+- Sets up all storage policies
+
+After running this, you're done! Skip to the "Testing" section below.
+
+---
+
+## Manual Setup (Alternative)
+
+If the automatic setup doesn't work, follow these manual steps:
+
+### Step 1: Apply the Database Migration
+
+Run this SQL in your Supabase SQL Editor:
+
+```sql
+ALTER TABLE contractors
+ADD COLUMN IF NOT EXISTS logo_url TEXT,
+ADD COLUMN IF NOT EXISTS street_address TEXT,
+ADD COLUMN IF NOT EXISTS address_unit TEXT,
+ADD COLUMN IF NOT EXISTS zip_code TEXT;
+```
 
 This adds the following fields to the `contractors` table:
 - `logo_url` - URL to the company logo
@@ -128,11 +153,25 @@ public/
 
 ## Troubleshooting
 
-### Logo Not Uploading
+### "Failed to upload logo" Error
+This usually means the storage bucket hasn't been created yet. Follow these steps:
+
+1. **Run the complete setup script** (see "Quick Setup" above)
+2. **OR manually create the bucket:**
+   - Go to Supabase Dashboard → Storage
+   - Click "New bucket"
+   - Name: `public`
+   - Check "Public bucket"
+   - Click "Create bucket"
+3. **Set up storage policies** using the SQL from the manual setup section
+4. **Try uploading again**
+
+### Logo Not Uploading (Other Reasons)
 - Check that the `public` bucket exists in Supabase Storage
-- Verify storage policies are set correctly
+- Verify storage policies are set correctly (run the policy SQL again)
 - Ensure file is under 2MB and is a valid image type
 - Check browser console for errors
+- Check Supabase logs: Dashboard → Logs → Storage logs
 
 ### Logo Not Displaying
 - Check that `logo_url` is saved in the contractors table
